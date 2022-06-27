@@ -17,7 +17,8 @@ const UserForm = (props) => {
     const [map, setMap] = React.useState(null)
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
-    const [selectedUser, setSelectedUser] = useState({})
+    const [selectedUserId, setSelectedUserId] = useState('')
+    const [selectedUser, setSelectedUser] = useState({});
     const [isFormSubmitted, setIdFormSubmitted] = useState(false)
 
     const handleOnTitleChange = (event) => {
@@ -31,17 +32,28 @@ const UserForm = (props) => {
     const handleOnSelect = (event) => {
         const value = event.target.value;
         let user = props.users.filter((user) => user.id === +value)
-        setSelectedUser(user[0])
+        if (user.length) {
+            setSelectedUserId(user[0]['id']);
+            setSelectedUser(user[0]);
+        }
+    }
+
+    const resetForm = () => {
+        setBody('');
+        setTitle('');
+        setIdFormSubmitted(false);
+        setMap(null);
+        setSelectedUserId('');
     }
 
     const onSubmit = (event) => {
         event.preventDefault();
         setIdFormSubmitted(true)
-        if (!Object.keys(selectedUser).length) return;
+        if (selectedUserId === '') return;
         const user = {
             title: title,
             body: body,
-            userId: selectedUser['id']
+            userId: selectedUserId
         }
 
         fetch('https://jsonplaceholder.typicode.com/posts', {
@@ -52,7 +64,8 @@ const UserForm = (props) => {
             },
             body: JSON.stringify(user)
         }).then(res => res.json()).then(res => {
-            console.log(res)
+            alert("Submitted Successfully");
+            resetForm();
         })
     }
 
@@ -73,11 +86,11 @@ const UserForm = (props) => {
         lng: selectedUser && selectedUser.address ? +selectedUser.address.geo.lng : 0
     };
 
-    const availableOptions = [<option key={`select`} value="select" disabled>Select user</option>, ...props.users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)]
+    const availableOptions = [<option key="" value="" disabled>Select user</option>, ...props.users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)]
     return (
         <form className='form'>
 
-            {!Object.keys(selectedUser).length && isFormSubmitted ? <h6 style={{ color: 'red' }}>Please select a user</h6> : ''}
+            {selectedUserId === '' && isFormSubmitted ? <h6 style={{ color: 'red' }}>Please select a user</h6> : ''}
             <Input
                 className="margin"
                 label="Title"
@@ -100,13 +113,13 @@ const UserForm = (props) => {
 
             <div className="margin">
                 <label>Select user</label>
-                <select placeholder='Select user...' defaultValue="select" onChange={handleOnSelect}>
+                <select placeholder='Select user...' value={selectedUserId} onChange={handleOnSelect}>
                     {availableOptions}
                 </select>
             </div>
 
-            <div style={!Object.keys(selectedUser).length ? { display: 'none' } : {}}>
-                {Object.keys(selectedUser).length && <GoogleMap
+            <div style={selectedUserId === '' ? { display: 'none' } : {}}>
+                {selectedUserId !== '' && <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}
                     zoom={10}
