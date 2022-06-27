@@ -1,0 +1,15 @@
+.form {
+    width: 500px;
+    padding: 1rem;
+    box-shadow: rgb(0 0 0 / 5%) 0px 6px 24px 0px, rgb(0 0 0 / 8%) 0px 0px 0px 1px;
+}
+
+.button {
+    background-color: #04AA6D !important;
+    border-radius: 5px;
+    font-size: 17px;
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 6px 18px;
+    border: 1px solid #04AA6D !important;
+    color: white;
+}
